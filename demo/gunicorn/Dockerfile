@@ -1,21 +1,21 @@
 FROM ubuntu:18.04
 
-RUN mkdir /var/www/
-RUN mkdir /var/www/TRX/
+RUN mkdir -p /var/www/TRX/
 WORKDIR /var/www/TRX/
 
 # System dependencies
-RUN apt-get update
-RUN apt-get install python3-pip -y
+RUN apt-get -yq update &&           \
+    apt-get -yq upgrade &&          \
+    apt install -y python3-pip
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+COPY requirements.txt .
+RUN pip3 install --upgrade pip &&   \
+    pip3 install -r requirements.txt
 
-# Install Gunicorn for running production server
-RUN pip3 install gunicorn
-
-COPY . /var/www/TRX/
+COPY transforms/ transforms/
+COPY project.py .
 
 RUN chown -R www-data:www-data /var/www/TRX/
 
-CMD ["python3", "project.py", "runserver"]
+EXPOSE 8080
+ENTRYPOINT ["gunicorn", "--bind=0.0.0.0:8080", "--threads=25", "--workers=2", "project:app"]
