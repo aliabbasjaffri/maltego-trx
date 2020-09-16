@@ -44,6 +44,7 @@ The Task
  | :bash:`AKV_NAME=$ACR_NAME-vault`
  | :bash:`EXPOSE_PORT=8080`
  
+ 
  # ``Create Azure Resource group``
 
  :bash:`$ az group create --location $LOCATION --name $RES_GROUP`
